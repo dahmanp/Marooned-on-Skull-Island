@@ -11,6 +11,8 @@ public class PlayerBehavior : MonoBehaviour
     public GameObject bullet;
     public float bulletSpeed = 100f;
     public GameBehavior gameManager;
+    public delegate void JumpingEvent();
+    public event JumpingEvent playerJump;
 
     private float vInput;
     private float hInput;
@@ -37,6 +39,7 @@ public class PlayerBehavior : MonoBehaviour
         if (IsGrounded() && Input.GetKeyDown(KeyCode.Space))
         {
             _rb.AddForce(Vector3.up * jumpVelocity, ForceMode.Impulse);
+            playerJump();
         }
 
         Vector3 rotation = Vector3.up * hInput;

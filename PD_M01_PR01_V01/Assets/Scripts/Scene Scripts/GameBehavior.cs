@@ -17,6 +17,9 @@ public class GameBehavior : MonoBehaviour, IManager
     public float moveSpeed = 10f;
     public string labelText = "Collect all 4 items and win your freedom!";
     public int maxItems = 4;
+    public Stack<string> lootStack = new Stack<string>();
+    public delegate void DebugDelegate(string newText);
+    public DebugDelegate debug = Print;
 
     private int _itemsCollected = 0;
     public int Items
@@ -63,6 +66,9 @@ public class GameBehavior : MonoBehaviour, IManager
     void Start()
     {
         Initialize();
+        InventoryList<string> inventoryList = new InventoryList<string>();
+        inventoryList.SetItem("Potion");
+        Debug.Log(inventoryList.item);
     }
 
     public void Initialize()
@@ -70,7 +76,35 @@ public class GameBehavior : MonoBehaviour, IManager
         _state = "Manager initialized...";
         _state.FancyDebug();
         Debug.Log(_state);
+        debug(_state);
+        LogWithDelegate(debug);
+
+        GameObject player = GameObject.Find("Player");
+        PlayerBehavior playerBehavior = player.GetComponent<PlayerBehavior>();
+        playerBehavior.playerJump += HandlePlayerJump;
+
+        lootStack.Push("Sword of Doom");
+        lootStack.Push("HP+");
+        lootStack.Push("Golden Key");
+        lootStack.Push("Winged Boot");
+        lootStack.Push("Mythril Bracers");
     }
+
+    public void HandlePlayerJump()
+    {
+        debug("Player has jumped...");
+    }
+
+    public static void Print(string newText)
+    {
+        Debug.Log(newText);
+    }
+
+    public void LogWithDelegate(DebugDelegate del)
+    {
+        del("Delegating the debug task...");
+    }
+
     void OnGUI()
     {
         GUI.Box(new Rect(20, 20, 150, 25), "Player Health:" + _playerHP);
@@ -83,7 +117,7 @@ public class GameBehavior : MonoBehaviour, IManager
             {
                 SceneManager.LoadScene(0);
                 Time.timeScale = 1.0f;
-                Utilities.RestartLevel(0);
+                Utilities.RestartLevel(-1);
             }
         }
 
@@ -92,10 +126,31 @@ public class GameBehavior : MonoBehaviour, IManager
             if (GUI.Button(new Rect(Screen.width / 2 - 100,
               Screen.height / 2 - 50, 200, 100), "The goal is to NOT die, fool."))
             {
-                SceneManager.LoadScene(0);
-                Time.timeScale = 1.0f;
-                Utilities.RestartLevel();
+                try
+                {
+                    Utilities.RestartLevel(-1);
+                    debug("Level Restarted Successfully...");
+                }
+                catch (System.ArgumentException e)
+                {
+                    Utilities.RestartLevel(0);
+                    debug("Reverting to scene 0: " + e.ToString());
+                }
+                finally
+                {
+                    debug("Restart Handled....");
+                }
+                //SceneManager.LoadScene(0);
+                //Time.timeScale = 1.0f;
+                //Utilities.RestartLevel(-1);
             }
         }
+    }
+    public void PrintLootReport()
+    {
+        var currentItem = lootStack.Pop();
+        var nextItem = lootStack.Peek();
+        Debug.LogFormat("You got a {0}! You've got a good chance of finding a {1} next!", currentItem, nextItem);
+        Debug.LogFormat("There are {0} random loot items waiting for you!", lootStack.Count);
     }
 }
