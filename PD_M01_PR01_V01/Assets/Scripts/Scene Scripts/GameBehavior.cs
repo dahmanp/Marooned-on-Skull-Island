@@ -31,7 +31,8 @@ public class GameBehavior : MonoBehaviour, IManager
             if (_itemsCollected >= maxItems)
             {
                 labelText = "You've found all the items!";
-                showWinScreen = true;
+                //showWinScreen = true; //
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
                 Time.timeScale = 0f;
             }
             else
