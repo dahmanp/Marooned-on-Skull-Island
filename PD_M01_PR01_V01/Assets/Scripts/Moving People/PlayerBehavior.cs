@@ -32,16 +32,16 @@ public class PlayerBehavior : MonoBehaviour
     {
         vInput = Input.GetAxis("Vertical") * gameManager.moveSpeed;
         hInput = Input.GetAxis("Horizontal") * rotateSpeed;
-    }
 
-    void FixedUpdate()
-    {
         if (IsGrounded() && Input.GetKeyDown(KeyCode.Space))
         {
             _rb.AddForce(Vector3.up * jumpVelocity, ForceMode.Impulse);
             playerJump();
         }
+    }
 
+    void FixedUpdate()
+    {
         Vector3 rotation = Vector3.up * hInput;
         Quaternion angleRot = Quaternion.Euler(rotation * Time.fixedDeltaTime);
         _rb.MovePosition(this.transform.position + this.transform.forward * vInput * Time.fixedDeltaTime);

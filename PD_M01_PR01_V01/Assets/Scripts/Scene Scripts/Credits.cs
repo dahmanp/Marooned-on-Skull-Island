@@ -7,7 +7,7 @@ public class Credits : MonoBehaviour
 {
     public void PlayAgain()
     {
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);//
-        SceneManager.LoadScene("HeroBorn", LoadSceneMode.Additive);
+        Debug.Log("clicked lol");
+        SceneManager.LoadScene("HeroBorn");
     }
 }
