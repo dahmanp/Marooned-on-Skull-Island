@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class PlayerBehavior : MonoBehaviour
 {
@@ -52,6 +53,8 @@ public class PlayerBehavior : MonoBehaviour
             GameObject newBullet = Instantiate(bullet, this.transform.position + new Vector3(1, 0, 0), this.transform.rotation) as GameObject;
             Rigidbody bulletRB = newBullet.GetComponent<Rigidbody>();
             bulletRB.velocity = this.transform.forward * bulletSpeed;
+            var audioSource = GetComponent<AudioSource>();
+            audioSource.Play();
         }
 
     }
